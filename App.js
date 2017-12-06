@@ -1,17 +1,33 @@
 import React from 'react'
-import { StyleSheet, Text, View, Button, Image, Linking } from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Linking,
+  Dimensions,
+  StatusBar,
+} from 'react-native'
+import { Constants, Font, ScreenOrientation } from 'expo'
+import { Ionicons } from '@expo/vector-icons'
+import { Button } from 'react-native-elements'
 
 import { convertDictionaryToQueryString } from './urlUtils'
+
+const { height: screenHeight, width: screenWidth } = Dimensions.get('window')
 
 export default class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       error: null,
+      fontLoaded: false,
     }
     this.onPressCheckout = this.onPressCheckout.bind(this)
   }
-  componentDidMount() {
+  async componentDidMount() {
+    ScreenOrientation.allow(ScreenOrientation.Orientation.PORTRAIT_UP)
+
     fetch(
       'http://api.vtex.com/instore/functions/vtex.instore-functions-example-cart-v0/run?workspace=beta',
       {
@@ -31,6 +47,14 @@ export default class App extends React.Component {
           error: `Error on getting new orderForm: ${e.message || e.toString()}`,
         })
       )
+
+    await Font.loadAsync({
+      'Fabriga-Bold': require('./assets/fonts/Fabriga-Bold.otf'),
+      'Fabriga-BoldItalic': require('./assets/fonts/Fabriga-BoldItalic.otf'),
+      'AvenirNextCondensed-Bold': require('./assets/fonts/AvenirNextCondensed-Bold.ttf'),
+    })
+
+    this.setState({ fontLoaded: true })
   }
 
   getInstoreUrl(order) {
@@ -59,28 +83,39 @@ export default class App extends React.Component {
   }
 
   render() {
-    console.log('render App')
-
     const order = this.state.order
+
+    console.log('render App', order && order.orderFormId)
 
     return (
       <View style={styles.container}>
-        {order ? (
-          <Text style={styles.topLabel}>Order ID: {order.orderFormId}</Text>
-        ) : null}
-        <Image
-          style={styles.itemImage}
-          source={{
-            uri: 'https://instoreqa.vteximg.com.br/arquivos/ids/155403-220-220',
-          }}
-        />
-        <Text style={styles.label}>2 trimedais</Text>
+        <View style={styles.headerContainer}>
+          <StatusBar backgroundColor="#141f32" barStyle="light-content" />
+          <View style={styles.header}>
+            <View style={styles.headerSearch}>
+              <Ionicons name="ios-search" size={24} color="white" />
+            </View>
+            {this.state.fontLoaded ? (
+              <Text style={styles.headerText}>IMPÉRIO DA CEREJA</Text>
+            ) : null}
+            <View style={styles.headerCart}>
+              <Ionicons name="md-cart" size={24} color="white" />
+            </View>
+          </View>
+        </View>
+        <View style={styles.bodyContainer}>
+          {/* <Image
+            style={styles.itemImage}
+            source={require('assets/images/cart-image.png')}
+          /> */}
+          <Text style={styles.label}>2 trimedais</Text>
+        </View>
         <Button
           onPress={this.onPressCheckout}
-          style={styles.button}
-          title="Fechar a venda"
-          color="#841584"
-          accessibilityLabel="Fechar a venda"
+          buttonStyle={styles.buttonContainer}
+          textStyle={styles.buttonText}
+          title="COMPRAR"
+          accessibilityLabel="COMPRAR"
         />
       </View>
     )
@@ -90,18 +125,56 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f6f6f6',
+    alignItems: 'center',
+  },
+  headerContainer: {
+    flexDirection: 'row',
+  },
+  headerText: {
+    fontFamily: 'AvenirNextCondensed-Bold',
+    fontSize: 21,
+    color: 'white',
+  },
+  header: {
+    flex: 1,
+    flexDirection: 'row',
+    position: 'relative',
+    height: 66 + Constants.statusBarHeight,
+    paddingTop: Constants.statusBarHeight,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#141f32',
   },
-  button: {
-    width: '90%',
-    marginTop: 20,
-    marginBottom: 20,
+  headerSearch: {
+    position: 'absolute',
+    flex: 1,
+    left: 14,
+    top: Constants.statusBarHeight + 19,
+    height: 24,
   },
-  topLabel: {
-    fontSize: 12,
-    marginBottom: 20,
+  headerCart: {
+    position: 'absolute',
+    flex: 1,
+    right: 14,
+    top: Constants.statusBarHeight + 19,
+    height: 24,
+  },
+  buttonContainer: {
+    width: screenWidth - 28,
+    backgroundColor: '#e3145e',
+    marginBottom: 14,
+    borderBottomWidth: 4,
+    borderColor: '#830a36',
+  },
+  buttonText: {
+    color: 'white',
+  },
+  bodyContainer: {
+    flex: 1,
+    backgroundColor: 'yellow',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   label: {
     marginTop: 20,
@@ -112,7 +185,6 @@ const styles = StyleSheet.create({
   itemImage: {
     width: 220,
     height: 220,
-    borderWidth: 1,
-    borderColor: '#841584',
+    backgroundColor: '#FFF',
   },
 })
