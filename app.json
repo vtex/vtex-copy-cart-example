@@ -1,5 +1,14 @@
 {
   "expo": {
-    "sdkVersion": "23.0.0"
+    "name": "Império da Cereja",
+    "slug": "imperio-da-cereja",
+    "icon": "./assets/images/app-icon.png",
+    "sdkVersion": "23.0.0",
+    "ios": {
+      "bundleIdentifier": "com.vtex.imperio-da-cereja"
+    },
+    "android": {
+      "package": "com.vtex.imperio-da-cereja"
+    }
   }
 }
