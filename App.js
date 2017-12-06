@@ -1,17 +1,19 @@
 import React from 'react'
 import {
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  Linking,
+  StatusBar,
   StyleSheet,
   Text,
   View,
-  Image,
-  Linking,
-  Dimensions,
-  StatusBar,
 } from 'react-native'
 import { Constants, Font, ScreenOrientation } from 'expo'
 import { Ionicons } from '@expo/vector-icons'
 import { Button } from 'react-native-elements'
 
+import { cartImage } from './assets/images'
 import { convertDictionaryToQueryString } from './urlUtils'
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window')
@@ -103,20 +105,32 @@ export default class App extends React.Component {
             </View>
           </View>
         </View>
-        <View style={styles.bodyContainer}>
-          {/* <Image
-            style={styles.itemImage}
-            source={require('assets/images/cart-image.png')}
-          /> */}
-          <Text style={styles.label}>2 trimedais</Text>
-        </View>
-        <Button
-          onPress={this.onPressCheckout}
-          buttonStyle={styles.buttonContainer}
-          textStyle={styles.buttonText}
-          title="COMPRAR"
-          accessibilityLabel="COMPRAR"
-        />
+
+        {this.state.fontLoaded ? (
+          <View style={styles.bodyContainer}>
+            <Image style={styles.itemImage} source={cartImage} />
+            <Text style={styles.itemLabel}>
+              Cerveja Colorado Rosália Cereja, 600ml
+            </Text>
+            <Text style={styles.itemPrice}>R$ 29,90</Text>
+          </View>
+        ) : (
+          <View style={styles.bodyContainer}>
+            <ActivityIndicator size="small" color="#e3145e" />
+          </View>
+        )}
+
+        {this.state.fontLoaded ? (
+          <Button
+            onPress={this.onPressCheckout}
+            buttonStyle={styles.buttonContainer}
+            textStyle={styles.buttonText}
+            title="COMPRAR"
+            accessibilityLabel="COMPRAR"
+          />
+        ) : (
+          <View style={styles.buttonContainer} />
+        )}
       </View>
     )
   }
@@ -163,28 +177,37 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: screenWidth - 28,
     backgroundColor: '#e3145e',
+    height: 54,
     marginBottom: 14,
     borderBottomWidth: 4,
     borderColor: '#830a36',
   },
   buttonText: {
     color: 'white',
+    fontFamily: 'Fabriga-Bold',
   },
   bodyContainer: {
     flex: 1,
-    backgroundColor: 'yellow',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  label: {
-    marginTop: 20,
+  itemLabel: {
+    fontFamily: 'Fabriga-Bold',
+    fontSize: 26,
+    textAlign: 'center',
+    color: '#141f32',
     marginBottom: 20,
-    fontWeight: 'bold',
-    fontSize: 20,
+  },
+  itemPrice: {
+    fontFamily: 'Fabriga-BoldItalic',
+    fontSize: 26,
+    textAlign: 'center',
+    color: '#e3145e',
   },
   itemImage: {
     width: 220,
     height: 220,
     backgroundColor: '#FFF',
+    marginBottom: 20,
   },
 })
