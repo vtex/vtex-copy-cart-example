@@ -31,7 +31,7 @@ export default class App extends React.Component {
     ScreenOrientation.allow(ScreenOrientation.Orientation.PORTRAIT_UP)
 
     fetch(
-      'http://api.vtex.com/instore/functions/vtex.instore-functions-example-cart-v0/run?workspace=beta',
+      'http://api.vtex.com/instore/functions/vtex.instore-functions-example-cart-v0/run',
       {
         headers: {
           'Content-Type': 'application/json',
